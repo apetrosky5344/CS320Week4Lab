@@ -1,0 +1,59 @@
+---
+- name: Week 4 Lab
+  hosts: all
+  become: true
+   
+  tasks:
+
+    - name: Download Google Chrome
+      ansible.builtin.get_url:
+        url: https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+        dest: /home
+
+    - name: Install Google Chrome Package
+      ansible.builtin.command: sudo dnf install -y ./google-chrome-stable_current_x86_64.rpm
+
+    - name: Install the latest version of Task 1 Software
+      ansible.builtin.dnf:
+        name: 
+         - httpd
+         - mariadb-server
+         - firefox
+         - git
+        state: latest
+
+    - name: Copy HTML File 1
+      ansible.builtin.copy:
+        src: /home/apetrosky5344/htmlfiles/file1.html
+        dest: /var/www/html/file1.html
+        remote_src: no
+
+    - name: Copy HTML File 2
+      ansible.builtin.copy:
+        src: /home/apetrosky5344/htmlfiles/file2.html
+        dest: /var/www/html/file2.html
+        remote_src: no
+
+    - name: Copy HTML File 3
+      ansible.builtin.copy:
+        src: /home/apetrosky5344/htmlfiles/file3.html
+        dest: /var/www/html/file3.html
+        remote_src: no
+
+    - name: Remove Google Chrome
+      ansible.builtin.command: sudo dnf remove -y google-chrome-stable
+      
+    
+    - name: Reboot Server
+      ansible.builtin.reboot:
+        test_command: uptime
+
+    - name: Enable service httpd, and not touch the state
+      ansible.builtin.service:
+        name: httpd
+        enabled: yes
+
+    - name: Restart service httpd, in all cases
+      ansible.builtin.service:
+        name: httpd
+        state: restarted
